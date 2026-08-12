@@ -178,7 +178,7 @@ function App() {
           <i className="ti ti-report-search text-[22px] group-hover:text-[32px] transition-all duration-300 shrink-0"></i>
           <div className="sidebar-text-expand flex flex-col justify-center">
             <span className="text-[42px]" style={{ fontFamily: "'Marck Script', cursive", lineHeight: '0.8' }}>Visitas</span>
-            <span className="text-[12px] tracking-[0.25em] uppercase font-bold text-white/80 mt-1">Nutricionais</span>
+            <span className="text-[9px] tracking-[0.25em] uppercase font-bold text-white/80 mt-1">Nutricionais</span>
           </div>
         </div>
         <nav className="mt-6 flex flex-col gap-2 px-2">
