@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Meta tags prontas para o futuro PWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#1a6b3a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    
+    <title>Visita Nutricional — SESC Mesa Brasil</title>
+    
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+    
+    <!-- Tailwind CSS (CDN para SPA sem build) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              mb: {
+                green: '#1a6b3a',
+                'green-light': '#e8f5ee',
+                'green-mid': '#2d8a50',
+                orange: '#e8600a',
+                'orange-light': '#fef0e6',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- React & Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Importação do CSS e JS separados -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bg-gray-50 text-gray-800 h-screen overflow-hidden">
+    <div id="root" class="h-full w-full"></div>
+    <script type="text/babel" src="app.jsx"></script>
+  </body>
+</html>
