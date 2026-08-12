@@ -30,9 +30,9 @@ const SLabel = ({ icon, text }) => (
   <p className="text-xs font-semibold text-mb-green uppercase tracking-wide mb-2 flex items-center gap-1.5"><i className={`ti ti-${icon} text-sm`}></i>{text}</p>
 );
 
-const Chip = ({ label, active, onClick, className = "" }) => (
+const Chip = ({ label, active, onClick, className = "", icon = "" }) => (
   <span onClick={onClick} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] cursor-pointer border transition-all select-none ${active ? "bg-mb-green-light border-mb-green text-mb-green font-medium" : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"} ${className}`}>
-    {active && <i className="ti ti-check text-[11px]"></i>}
+    {active ? <i className="ti ti-check text-[11px]"></i> : (icon ? <i className={`ti ti-${icon} text-[15px] text-gray-400`}></i> : null)}
     {label}
   </span>
 );
@@ -47,9 +47,11 @@ const YN = ({ val, onChange }) => (
   </div>
 );
 
-const QR = ({ label, value, onChange }) => (
+const QR = ({ label, value, onChange, icon = "" }) => (
   <div className="flex items-center gap-3 mb-2">
-    <label className="text-[13px] text-gray-600 flex-1">{label}</label>
+    <label className="text-[13px] text-gray-600 flex-1 flex items-center gap-2">
+      {icon && <i className={`ti ti-${icon} text-lg text-gray-400`}></i>} {label}
+    </label>
     <input type="number" placeholder="0" value={value} onChange={(e) => onChange(e.target.value)} className="w-20 p-2 rounded-lg border border-gray-300 outline-none focus:border-mb-green text-center text-sm" />
   </div>
 );
@@ -84,7 +86,13 @@ function App() {
   const [activeMenu, setActiveMenu] = useState("nova");
   const [form, setForm] = useState(() => {
     const saved = localStorage.getItem("mb_visita_rascunho");
-    return saved ? JSON.parse(saved) : initForm();
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Trava de segurança: se detectar estrutura velha do fogão, ele zera o form pra evitar tela branca
+      if (typeof parsed.equipamentos?.fogao !== 'object') return initForm();
+      return parsed;
+    }
+    return initForm();
   });
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
@@ -167,8 +175,11 @@ function App() {
     <div className="group w-16 hover:w-64 transition-all duration-300 bg-mb-green text-white flex-col justify-between hidden md:flex h-full shadow-2xl z-50 no-print">
       <div>
         <div className="h-16 flex items-center px-4 border-b border-white/10 bg-mb-green-mid/30">
-          <i className="ti ti-leaf text-2xl shrink-0"></i>
-          <span className="sidebar-text-expand font-semibold tracking-wide">Visitas Nutricionais</span>
+          <i className="ti ti-progress-check text-[28px] shrink-0"></i>
+          <div className="sidebar-text-expand flex flex-col justify-center leading-tight">
+            <span className="text-[26px] mt-1" style={{ fontFamily: "'Marck Script', cursive" }}>Visitas</span>
+            <span className="text-[9px] tracking-widest uppercase font-semibold text-white/80 -mt-1">Nutricionais</span>
+          </div>
         </div>
         <nav className="mt-6 flex flex-col gap-2 px-2">
           <button onClick={() => { setActiveMenu('nova'); setDone(false); }} className={`flex items-center w-full px-3 py-3 rounded-lg transition-colors ${activeMenu === 'nova' && !done ? 'bg-white/20' : 'hover:bg-white/10'}`}>
@@ -189,7 +200,15 @@ function App() {
   );
 
   const MobileNav = () => (
-    <div className="md:hidden flex w-full h-16 bg-white border-t border-gray-200 justify-around items-center text-gray-500 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] no-print">
+    <div className="md:hidden bg-mb-green text-white p-4 shadow-md flex items-center justify-between z-10 no-print">
+           <div className="flex items-center gap-2">
+             <i className="ti ti-progress-check text-[28px]"></i>
+             <div className="flex flex-col leading-tight mt-1">
+               <span className="text-[24px] leading-[14px]" style={{ fontFamily: "'Marck Script', cursive" }}>Visitas</span>
+               <span className="text-[9px] tracking-widest uppercase font-semibold text-white/80">Nutricionais</span>
+             </div>
+           </div>
+        </div>
       <button onClick={() => { setActiveMenu('nova'); setDone(false); }} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'nova' && !done ? 'text-mb-green' : ''}`}><i className="ti ti-clipboard-plus text-xl mb-1"></i><span className="text-[10px] font-medium">Nova</span></button>
       <button onClick={() => setActiveMenu('historico')} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'historico' ? 'text-mb-green' : ''}`}><i className="ti ti-history text-xl mb-1"></i><span className="text-[10px] font-medium">Histórico</span></button>
       <button onClick={() => setActiveMenu('instituicoes')} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'instituicoes' ? 'text-mb-green' : ''}`}><i className="ti ti-building-cog text-xl mb-1"></i><span className="text-[10px] font-medium">Locais</span></button>
@@ -230,7 +249,12 @@ function App() {
           <SLabel icon="basket" text="Alimentação e Refeições" />
           <div className="mb-4">
             <p className="text-xs text-gray-500 mb-2">Alimentos mais necessários</p>
-            <div className="flex flex-wrap gap-2">{["FLV", "Pães", "Cesta básica", "Industrializados", "Carnes", "Laticínios", "Todos"].map(a => <Chip key={a} label={a} active={f.alimentos.includes(a)} onClick={() => tog("alimentos", a)} />)}</div>
+            <div className="flex flex-wrap gap-2">
+              {["FLV", "Pães", "Cesta básica", "Industrializados", "Carnes", "Laticínios", "Todos"].map(a => {
+                const iconMap = {"FLV": "apple", "Pães": "baguette", "Cesta básica": "package", "Industrializados": "box", "Carnes": "meat", "Laticínios": "milk", "Todos": "basket"};
+                return <Chip key={a} label={a} icon={iconMap[a]} active={f.alimentos.includes(a)} onClick={() => tog("alimentos", a)} />
+              })}
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
@@ -248,7 +272,12 @@ function App() {
 
           <div className="mb-4">
             <p className="text-xs text-gray-500 mb-2">Refeições oferecidas</p>
-            <div className="flex flex-wrap gap-2">{REFEICOES.map(r => <Chip key={r} label={r} active={f.refeicoes.includes(r)} onClick={() => tog("refeicoes", r)} />)}</div>
+            <div className="flex flex-wrap gap-2">
+              {REFEICOES.map(r => {
+                const refIcon = {"Café da manhã": "coffee", "Lanche da manhã": "croissant", "Almoço": "soup", "Lanche da tarde": "cup", "Jantar": "tools-kitchen-2", "Ceia": "moon"};
+                return <Chip key={r} label={r} icon={refIcon[r]} active={f.refeicoes.includes(r)} onClick={() => tog("refeicoes", r)} />
+              })}
+            </div>
           </div>
 
           <div>
@@ -264,21 +293,21 @@ function App() {
         <div>
           <SLabel icon="tool" text="Equipamentos" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-            <QR label="Geladeira doméstica" value={eq.geladeiraDom} onChange={v => updN("equipamentos", "geladeiraDom", v)} />
-            <QR label="Geladeira industrial" value={eq.geladeiraInd} onChange={v => updN("equipamentos", "geladeiraInd", v)} />
+            <QR icon="fridge" label="Geladeira doméstica" value={eq.geladeiraDom} onChange={v => updN("equipamentos", "geladeiraDom", v)} />
+            <QR icon="fridge" label="Geladeira industrial" value={eq.geladeiraInd} onChange={v => updN("equipamentos", "geladeiraInd", v)} />
             <div>
-              <QR label="Quantidade de fogões" value={eq.fogao.qtd} onChange={v => setForm(f => ({...f, equipamentos: {...f.equipamentos, fogao: {...f.equipamentos.fogao, qtd: v}}}))} />
-              {eq.fogao.qtd > 0 && <div className="flex gap-2 mb-2">{["4", "6", "8", "Mais de 8"].map(b => <Chip key={b} label={b+" bocas"} active={eq.fogao.bocas === b} onClick={() => setForm(f => ({...f, equipamentos: {...f.equipamentos, fogao: {...f.equipamentos.fogao, bocas: b}}}))} />)}</div>}
+              <QR icon="cooker" label="Quantidade de fogões" value={eq.fogao?.qtd || ""} onChange={v => setForm(f => ({...f, equipamentos: {...f.equipamentos, fogao: {...f.equipamentos.fogao, qtd: v}}}))} />
+              {eq.fogao?.qtd > 0 && <div className="flex gap-2 mb-2">{["4", "6", "8", "Mais de 8"].map(b => <Chip key={b} label={b+" bocas"} active={eq.fogao?.bocas === b} onClick={() => setForm(f => ({...f, equipamentos: {...f.equipamentos, fogao: {...f.equipamentos.fogao, bocas: b}}}))} />)}</div>}
             </div>
             <div>
-              <QR label="Quantidade de freezers" value={eq.freezer.qtd} onChange={v => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, qtd: v}}}))} />
-              {eq.freezer.qtd > 0 && <div className="flex gap-2 flex-wrap mb-2">{["Vert. 1P", "Horiz. 1P", "Horiz. 2P"].map(t => <Chip key={t} label={t} active={eq.freezer.tipos.includes(t)} onClick={() => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, tipos: f.equipamentos.freezer.tipos.includes(t) ? f.equipamentos.freezer.tipos.filter(x=>x!==t) : [...f.equipamentos.freezer.tipos, t]}}}))} />)}</div>}
+              <QR icon="snowflake" label="Quantidade de freezers" value={eq.freezer?.qtd || ""} onChange={v => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, qtd: v}}}))} />
+              {eq.freezer?.qtd > 0 && <div className="flex gap-2 flex-wrap mb-2">{["Vert. 1P", "Horiz. 1P", "Horiz. 2P"].map(t => <Chip key={t} label={t} active={eq.freezer?.tipos.includes(t)} onClick={() => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, tipos: f.equipamentos.freezer.tipos.includes(t) ? f.equipamentos.freezer.tipos.filter(x=>x!==t) : [...f.equipamentos.freezer.tipos, t]}}}))} />)}</div>}
             </div>
-            <QR label="Câmara fria" value={eq.camaraFria} onChange={v => updN("equipamentos", "camaraFria", v)} />
-            <QR label="Balcão quente" value={eq.balcaoQuente} onChange={v => updN("equipamentos", "balcaoQuente", v)} />
-            <QR label="Balcão frio" value={eq.balcaoFrio} onChange={v => updN("equipamentos", "balcaoFrio", v)} />
-            <QR label="Forno comum" value={eq.fornoComum} onChange={v => updN("equipamentos", "fornoComum", v)} />
-            <QR label="Forno combinado" value={eq.fornoCombinado} onChange={v => updN("equipamentos", "fornoCombinado", v)} />
+            <QR icon="box" label="Câmara fria" value={eq.camaraFria} onChange={v => updN("equipamentos", "camaraFria", v)} />
+            <QR icon="flame" label="Balcão quente" value={eq.balcaoQuente} onChange={v => updN("equipamentos", "balcaoQuente", v)} />
+            <QR icon="ice-cream" label="Balcão frio" value={eq.balcaoFrio} onChange={v => updN("equipamentos", "balcaoFrio", v)} />
+            <QR icon="microwave" label="Forno comum" value={eq.fornoComum} onChange={v => updN("equipamentos", "fornoComum", v)} />
+            <QR icon="cooker" label="Forno combinado" value={eq.fornoCombinado} onChange={v => updN("equipamentos", "fornoCombinado", v)} />
           </div>
           <input type="text" placeholder="Outros equipamentos..." value={eq.outros} onChange={e => updN("equipamentos", "outros", e.target.value)} className="w-full p-2.5 rounded-lg border outline-none text-sm mt-2" />
         </div>
