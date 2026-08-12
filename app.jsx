@@ -174,11 +174,11 @@ function App() {
   const Sidebar = () => (
     <div className="group w-16 hover:w-64 transition-all duration-300 bg-mb-green text-white flex-col justify-between hidden md:flex h-full shadow-2xl z-50 no-print">
       <div>
-        <div className="h-16 flex items-center px-4 border-b border-white/10 bg-mb-green-mid/30">
-          <i className="ti ti-progress-check text-[28px] shrink-0"></i>
-          <div className="sidebar-text-expand flex flex-col justify-center leading-tight">
-            <span className="text-[26px] mt-1" style={{ fontFamily: "'Marck Script', cursive" }}>Visitas</span>
-            <span className="text-[9px] tracking-widest uppercase font-semibold text-white/80 -mt-1">Nutricionais</span>
+        <div className="h-20 flex items-center justify-center border-b border-white/10 bg-mb-green-mid/30 overflow-hidden">
+          <i className="ti ti-report-search text-[28px] group-hover:text-[42px] transition-all duration-300 shrink-0"></i>
+          <div className="sidebar-text-expand flex flex-col justify-center">
+            <span className="text-[34px]" style={{ fontFamily: "'Marck Script', cursive", lineHeight: '0.8' }}>Visitas</span>
+            <span className="text-[9px] tracking-[0.25em] uppercase font-bold text-white/80 mt-1">Nutricionais</span>
           </div>
         </div>
         <nav className="mt-6 flex flex-col gap-2 px-2">
@@ -408,12 +408,12 @@ function App() {
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         
         {/* Cabecalho Mobile (onde fica a nova logo cursiva!) */}
-        <div className="md:hidden bg-mb-green text-white p-4 shadow-md flex items-center justify-between z-10 no-print">
-           <div className="flex items-center gap-2">
-             <i className="ti ti-progress-check text-[28px]"></i>
-             <div className="flex flex-col leading-tight mt-1">
-               <span className="text-[24px] leading-[14px]" style={{ fontFamily: "'Marck Script', cursive" }}>Visitas</span>
-               <span className="text-[9px] tracking-widest uppercase font-semibold text-white/80">Nutricionais</span>
+        <div className="md:hidden bg-mb-green text-white p-4 h-20 shadow-md flex items-center justify-center z-10 no-print">
+           <div className="flex items-center gap-3">
+             <i className="ti ti-report-search text-[42px]"></i>
+             <div className="flex flex-col justify-center">
+               <span className="text-[34px]" style={{ fontFamily: "'Marck Script', cursive", lineHeight: '0.8' }}>Visitas</span>
+               <span className="text-[9px] tracking-[0.25em] uppercase font-bold text-white/80 mt-1">Nutricionais</span>
              </div>
            </div>
         </div>
