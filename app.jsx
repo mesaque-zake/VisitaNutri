@@ -24,7 +24,7 @@ const initForm = () => ({
 });
 
 // ==========================================
-// 2. COMPONENTES REUTILIZÁVEIS UI (Migrados pro Tailwind)
+// 2. COMPONENTES REUTILIZÁVEIS UI 
 // ==========================================
 const SLabel = ({ icon, text }) => (
   <p className="text-xs font-semibold text-mb-green uppercase tracking-wide mb-2 flex items-center gap-1.5"><i className={`ti ti-${icon} text-sm`}></i>{text}</p>
@@ -88,7 +88,7 @@ function App() {
     const saved = localStorage.getItem("mb_visita_rascunho");
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Trava de segurança: se detectar estrutura velha do fogão, ele zera o form pra evitar tela branca
+      // Trava de segurança: Limpa cache antigo se estrutura for diferente para não dar tela branca
       if (typeof parsed.equipamentos?.fogao !== 'object') return initForm();
       return parsed;
     }
@@ -116,7 +116,7 @@ function App() {
     ...f, orientacoesRapidas: f.orientacoesRapidas.filter(x => x !== txt), orientacoesNutricionista: f.orientacoesNutricionista.split("\n").filter(l => !l.includes(txt)).join("\n")
   }));
 
-  // GERADOR DE TEXTO (COPIAR INTELIGENTE - Só mostra o que foi preenchido)
+  // GERADOR DE TEXTO (COPIAR INTELIGENTE)
   const gerarTexto = () => {
     const f = form; const eq = f.equipamentos;
     let txt = `RELATÓRIO DE VISITA NUTRICIONAL — SESC MESA BRASIL\nData: ${f.data}\n`;
@@ -135,8 +135,8 @@ function App() {
     let eqStr = [];
     if(eq.geladeiraDom) eqStr.push(`Geladeira Dom: ${eq.geladeiraDom}`);
     if(eq.geladeiraInd) eqStr.push(`Geladeira Ind: ${eq.geladeiraInd}`);
-    if(eq.fogao.qtd) eqStr.push(`Fogão: ${eq.fogao.qtd} (${eq.fogao.bocas} bocas)`);
-    if(eq.freezer.qtd) eqStr.push(`Freezer: ${eq.freezer.qtd} (${eq.freezer.tipos.join(', ')})`);
+    if(eq.fogao?.qtd) eqStr.push(`Fogão: ${eq.fogao.qtd} (${eq.fogao.bocas} bocas)`);
+    if(eq.freezer?.qtd) eqStr.push(`Freezer: ${eq.freezer.qtd} (${eq.freezer.tipos.join(', ')})`);
     if(eq.camaraFria) eqStr.push(`Câmara Fria: ${eq.camaraFria}`);
     if(eq.balcaoQuente) eqStr.push(`Balcão Quente: ${eq.balcaoQuente}`);
     if(eq.balcaoFrio) eqStr.push(`Balcão Frio: ${eq.balcaoFrio}`);
@@ -200,15 +200,7 @@ function App() {
   );
 
   const MobileNav = () => (
-    <div className="md:hidden bg-mb-green text-white p-4 shadow-md flex items-center justify-between z-10 no-print">
-           <div className="flex items-center gap-2">
-             <i className="ti ti-progress-check text-[28px]"></i>
-             <div className="flex flex-col leading-tight mt-1">
-               <span className="text-[24px] leading-[14px]" style={{ fontFamily: "'Marck Script', cursive" }}>Visitas</span>
-               <span className="text-[9px] tracking-widest uppercase font-semibold text-white/80">Nutricionais</span>
-             </div>
-           </div>
-        </div>
+    <div className="md:hidden flex w-full h-16 bg-white border-t border-gray-200 justify-around items-center text-gray-500 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] no-print">
       <button onClick={() => { setActiveMenu('nova'); setDone(false); }} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'nova' && !done ? 'text-mb-green' : ''}`}><i className="ti ti-clipboard-plus text-xl mb-1"></i><span className="text-[10px] font-medium">Nova</span></button>
       <button onClick={() => setActiveMenu('historico')} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'historico' ? 'text-mb-green' : ''}`}><i className="ti ti-history text-xl mb-1"></i><span className="text-[10px] font-medium">Histórico</span></button>
       <button onClick={() => setActiveMenu('instituicoes')} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'instituicoes' ? 'text-mb-green' : ''}`}><i className="ti ti-building-cog text-xl mb-1"></i><span className="text-[10px] font-medium">Locais</span></button>
@@ -301,7 +293,7 @@ function App() {
             </div>
             <div>
               <QR icon="snowflake" label="Quantidade de freezers" value={eq.freezer?.qtd || ""} onChange={v => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, qtd: v}}}))} />
-              {eq.freezer?.qtd > 0 && <div className="flex gap-2 flex-wrap mb-2">{["Vert. 1P", "Horiz. 1P", "Horiz. 2P"].map(t => <Chip key={t} label={t} active={eq.freezer?.tipos.includes(t)} onClick={() => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, tipos: f.equipamentos.freezer.tipos.includes(t) ? f.equipamentos.freezer.tipos.filter(x=>x!==t) : [...f.equipamentos.freezer.tipos, t]}}}))} />)}</div>}
+              {eq.freezer?.qtd > 0 && <div className="flex gap-2 flex-wrap mb-2">{["Vert. 1P", "Horiz. 1P", "Horiz. 2P"].map(t => <Chip key={t} label={t} active={eq.freezer?.tipos.includes(t)} onClick={() => setForm(f => ({...f, equipamentos: {...f.equipamentos, freezer: {...f.equipamentos.freezer, types: f.equipamentos.freezer.tipos.includes(t) ? f.equipamentos.freezer.tipos.filter(x=>x!==t) : [...f.equipamentos.freezer.tipos, t]}}}))} />)}</div>}
             </div>
             <QR icon="box" label="Câmara fria" value={eq.camaraFria} onChange={v => updN("equipamentos", "camaraFria", v)} />
             <QR icon="flame" label="Balcão quente" value={eq.balcaoQuente} onChange={v => updN("equipamentos", "balcaoQuente", v)} />
@@ -389,7 +381,7 @@ function App() {
   };
 
   // ==========================================
-  // TELA DE RESUMO E IMPRESSÃO (NOVO)
+  // TELA DE RESUMO E IMPRESSÃO
   // ==========================================
   const renderResumo = () => (
     <div className="animate-fade-in print-container bg-white rounded-2xl md:shadow-lg border border-gray-100 overflow-hidden">
@@ -414,8 +406,16 @@ function App() {
     <div className="flex h-screen w-full bg-gray-50">
       <Sidebar />
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        {/* Cabecalho Mobile (onde fica a nova logo cursiva!) */}
         <div className="md:hidden bg-mb-green text-white p-4 shadow-md flex items-center justify-between z-10 no-print">
-           <div className="flex items-center gap-2"><i className="ti ti-leaf text-xl"></i><h1 className="font-semibold text-sm">Mesa Brasil</h1></div>
+           <div className="flex items-center gap-2">
+             <i className="ti ti-progress-check text-[28px]"></i>
+             <div className="flex flex-col leading-tight mt-1">
+               <span className="text-[24px] leading-[14px]" style={{ fontFamily: "'Marck Script', cursive" }}>Visitas</span>
+               <span className="text-[9px] tracking-widest uppercase font-semibold text-white/80">Nutricionais</span>
+             </div>
+           </div>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
@@ -460,6 +460,7 @@ function App() {
           </div>
         </div>
       </main>
+      
       <MobileNav />
 
       {/* Modal S-PEN */}
