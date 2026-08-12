@@ -1,0 +1,50 @@
+/* Customização da Barra de Rolagem (Scrollbar) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Oculta os atalhos de navegação e botões na hora de gerar PDF */
+@media print {
+  body {
+    background: white;
+    height: auto;
+    overflow: visible;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only-text {
+    color: black;
+  }
+}
+
+/* Utilitário para transições do menu lateral */
+.sidebar-text-expand {
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.3s ease, opacity 0.3s ease, padding-left 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.group:hover .sidebar-text-expand {
+  max-width: 250px;
+  opacity: 1;
+  padding-left: 12px; /* Espaço entre o ícone e o texto */
+}
+
+/* Efeito no modal do S-Pen */
+.spen-modal-open {
+  backdrop-filter: blur(4px);
+}
