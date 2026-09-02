@@ -385,8 +385,7 @@ function App() {
   // SIDEBARS & MENUS
   // ==========================================
   const Sidebar = () => (
-    <div className="group w-16 hover:w-64 transition-all duration-300 bg-zinc-200 text-zinc-800 flex flex-col justify-between hidden md:flex h-full shadow-2xl z-50 no-print border-r border-zinc-300/40">
-      <div>
+    <div className="group w-16 hover:w-64 transition-all duration-300 bg-zinc-200 text-zinc-800 flex flex-col justify-between flex h-full shadow-2xl z-50 no-print border-r border-zinc-300/40">
         {/* Logo Cursiva com Crescimento de Fonte Real e Suave */}
         <div className="h-28 flex items-center justify-center overflow-hidden">
           <div className="flex flex-col items-center justify-center transition-all duration-300 ease-in-out">
@@ -457,13 +456,6 @@ function App() {
           <i className="ti ti-code"></i>
         </div>
       </div>
-    </div>
-  );
-
-  const MobileNav = () => (
-    <div className="md:hidden flex w-full h-16 bg-white border-t border-gray-200 justify-around items-center text-gray-500 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] no-print">
-      <button onClick={() => { setActiveMenu('nova'); setDone(false); }} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'nova' && !done ? 'text-blue-600 font-semibold' : ''}`}><i className="ti ti-clipboard-plus text-xl mb-1"></i><span className="text-[10px] font-medium">Nova</span></button>
-      <button onClick={() => setActiveMenu('historico')} className={`flex flex-col items-center justify-center w-full h-full ${activeMenu === 'historico' ? 'text-blue-600 font-semibold' : ''}`}><i className="ti ti-history text-xl mb-1"></i><span className="text-[10px] font-medium">Histórico</span></button>
     </div>
   );
 
@@ -787,17 +779,6 @@ function App() {
       <Sidebar />
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         
-        {/* Cabecalho Mobile (onde fica a nova logo cursiva!) */}
-        <div className="md:hidden bg-mb-green text-white p-4 h-20 shadow-md flex items-center justify-center z-10 no-print">
-           <div className="flex items-center gap-3">
-             <i className="ti ti-report-search text-[42px]"></i>
-             <div className="flex flex-col justify-center">
-               <span className="text-[34px]" style={{ fontFamily: "'Marck Script', cursive", lineHeight: '0.8' }}>Visitas</span>
-               <span className="text-[9px] tracking-[0.25em] uppercase font-bold text-white/80 mt-1">Nutricionais</span>
-             </div>
-           </div>
-        </div>
-        
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto">
             {activeMenu === 'nova' && !done && (
@@ -942,8 +923,6 @@ function App() {
           </div>
         </div>
       </main>
-      
-      <MobileNav />
 
       {/* Modal S-PEN (Visual Caderno de Anotações Premium) */}
       <div id="spen-modal" className="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md spen-modal-open flex items-center justify-center p-4 md:p-10 no-print">
