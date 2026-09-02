@@ -385,7 +385,8 @@ function App() {
   // SIDEBARS & MENUS
   // ==========================================
   const Sidebar = () => (
-    <div className="group w-16 hover:w-64 transition-all duration-300 bg-zinc-200 text-zinc-800 flex flex-col justify-between flex h-full shadow-2xl z-50 no-print border-r border-zinc-300/40">
+    <div className="group w-16 hover:w-64 transition-all duration-300 bg-zinc-200 text-zinc-800 flex flex-col justify-between h-full shadow-2xl z-50 no-print border-r border-zinc-300/40">
+      <div>
         {/* Logo Cursiva com Crescimento de Fonte Real e Suave */}
         <div className="h-28 flex items-center justify-center overflow-hidden">
           <div className="flex flex-col items-center justify-center transition-all duration-300 ease-in-out">
@@ -401,7 +402,7 @@ function App() {
           </div>
         </div>
 
-        {/* Menu de Navegação e Ações Padronizadas (Fundo Zinc) */}
+        {/* Menu de Navegação e Ações Padronizadas */}
         <nav className="mt-4 flex flex-col gap-4 px-2">
           {/* Botão Nova Visita */}
           <button 
@@ -430,7 +431,7 @@ function App() {
             <div className="w-12 h-12 flex items-center justify-center shrink-0">
               <i className="ti ti-history text-xl"></i>
             </div>
-            <span className="sidebar-text-expand text-sm font-semibold truncate">Histórico</span>
+            <span className="sidebar-text-expand text-sm font-semibold truncate">Histórico (7 dias)</span>
           </button>
 
           {/* Botão Sincronizar planilha de Instituições */}
@@ -449,7 +450,7 @@ function App() {
       {/* Rodapé Desenvolvedores */}
       <div className="mb-6 w-full flex flex-col items-center justify-center text-zinc-500 text-[10px] text-center select-none overflow-hidden h-12">
         <div className="hidden group-hover:flex flex-col items-center animate-fade-in whitespace-nowrap">
-          <span>Powered with <span className="text-rose-500">&#10084;</span> by </span>
+          <span>Powered with <span className="text-rose-500">&#10084;</span> by</span>
           <span className="mt-0.5"> <b>Mesaque</b> & <b>Lorrana</b></span>
         </div>
         <div className="flex group-hover:hidden text-blue-600 text-lg hover:text-blue-700 transition-colors cursor-help" title="Powered by Mesaque & Lorrana">
@@ -458,7 +459,6 @@ function App() {
       </div>
     </div>
   );
-
   // ==========================================
   // RENDERIZAÇÃO DAS TRÊS ETAPAS (CARDS)
   // ==========================================
