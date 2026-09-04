@@ -469,85 +469,91 @@ function App() {
   };
 
   // ==========================================
-  // NOVA NAVEGAÇÃO: CABEÇALHO EXPANSÍVEL PREMIUM
+  // ILHA DE NAVEGAÇÃO EXPANSÍVEL PREMIUM (WOW FACTOR)
   // ==========================================
   const Header = () => (
-    <header className={`w-full bg-[#3c67ea] text-white shadow-md transition-all duration-300 ease-in-out overflow-hidden no-print z-50 shrink-0 ${
-      isMenuOpen ? 'max-h-60' : 'max-h-16'
+    <header className={`w-full bg-gradient-to-br from-[#3c67ea] to-[#1e40af] text-white border border-white/15 shadow-[0_15px_35px_rgba(60,103,234,0.18)] transition-all duration-300 ease-out overflow-hidden rounded-2xl md:rounded-3xl ${
+      isMenuOpen ? 'max-h-64' : 'max-h-16'
     }`}>
-      {/* Barra Principal (Sempre Visível) */}
-      <div className="h-16 px-4 md:px-6 flex items-center justify-between">
+      {/* Barra Principal */}
+      <div className="h-16 px-5 md:px-7 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold tracking-wide select-none" style={{ fontFamily: "'Dancing Script', cursive" }}>
+          <span className="text-2xl font-extrabold tracking-wide select-none animate-fade-in" style={{ fontFamily: "'Dancing Script', cursive" }}>
             Visitas
           </span>
-          <span className="text-[9px] tracking-[0.2em] uppercase font-bold select-none opacity-80">
+          <span className="text-[9px] tracking-[0.25em] uppercase font-black select-none opacity-85">
             Nutricionais
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Indicador de Salvamento Automático Interno */}
+        <div className="flex items-center gap-4">
+          {/* Indicador de Salvamento Automático Flutuante */}
           {lastSaved && activeMenu === 'nova' && !done && (
-            <div className="flex items-center gap-1.5 text-[11px] select-none bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 text-blue-100">
-              <span className="relative flex h-1.5 w-1.5">
+            <div className="flex items-center gap-2 text-[11px] select-none bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10 text-blue-100 transition-all">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span>Salvo às {lastSaved}</span>
+              <span className="font-medium">Salvo às {lastSaved}</span>
             </div>
           )}
 
-          {/* Botão de Expansão (Chevron) */}
+          {/* Botão Chevron Premium com rotação */}
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)} 
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
+            className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 active:scale-95 hover:scale-105 transition-all cursor-pointer shadow-sm"
           >
-            <i className={`ti ti-chevron-down text-xl transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`}></i>
+            <i className={`ti ti-chevron-down text-lg transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`}></i>
           </button>
         </div>
       </div>
 
-      {/* Área Expandida (Menu Lado-a-Lado e Assinatura) */}
-      <div className="px-4 md:px-6 pb-4 pt-1 border-t border-white/10 flex flex-col items-center gap-4">
-        {/* Botões do Menu Organizandos Lado a Lado */}
-        <nav className="flex flex-row justify-center gap-2 md:gap-4 w-full max-w-2xl flex-wrap">
+      {/* Área Expandida */}
+      <div className="px-5 md:px-7 pb-5 pt-1 border-t border-white/10 flex flex-col items-center gap-5">
+        {/* Grid de Botões com Efeitos de Brilho no Ativo */}
+        <nav className="flex flex-row justify-center gap-3 w-full max-w-2xl flex-wrap">
           <button 
             onClick={() => { setActiveMenu('nova'); setDone(false); setIsMenuOpen(false); }} 
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer active:scale-95 ${
               activeMenu === 'nova' && !done 
-                ? 'bg-white text-[#3c67ea] font-semibold shadow-md shadow-black/5' 
-                : 'text-white bg-white/10 hover:bg-white/15'
+                ? 'bg-white text-[#3c67ea] shadow-[0_10px_25px_rgba(255,255,255,0.25)] scale-[1.03] border-none' 
+                : 'text-white bg-white/10 hover:bg-white/15 border border-white/10 hover:scale-102'
             }`}
           >
-            <i className="ti ti-clipboard-plus text-lg"></i>
+            <i className="ti ti-clipboard-plus text-base"></i>
             <span>Nova Visita</span>
           </button>
 
           <button 
             onClick={() => { setActiveMenu('historico'); setIsMenuOpen(false); }} 
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer active:scale-95 ${
               activeMenu === 'historico' 
-                ? 'bg-white text-[#3c67ea] font-semibold shadow-md shadow-black/5' 
-                : 'text-white bg-white/10 hover:bg-white/15'
+                ? 'bg-white text-[#3c67ea] shadow-[0_10px_25px_rgba(255,255,255,0.25)] scale-[1.03] border-none' 
+                : 'text-white bg-white/10 hover:bg-white/15 border border-white/10 hover:scale-102'
             }`}
           >
-            <i className="ti ti-history text-lg"></i>
+            <i className="ti ti-history text-base"></i>
             <span>Histórico</span>
           </button>
 
           <button 
             onClick={() => { carregarInstituicoesSheets(true); setIsMenuOpen(false); }} 
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all text-white bg-white/10 hover:bg-white/15 cursor-pointer"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all text-white bg-white/10 hover:bg-white/15 border border-white/10 hover:scale-102 cursor-pointer active:scale-95"
           >
-            <i className="ti ti-refresh text-lg"></i>
-            <span>Sincronizar Locais</span>
+            <i className="ti ti-refresh text-base"></i>
+            <span>Sincronizar</span>
           </button>
         </nav>
 
-        {/* Assinatura Centralizada em Linha Única */}
-        <div className="text-[10px] text-white/60 select-none text-center">
-          <span>Powered with <span className="text-rose-400">&#10084;</span> by <b>Mesaque</b> & <b>Lorrana</b></span>
+        {/* Divisor Fino */}
+        <div className="w-16 h-[1px] bg-white/10"></div>
+
+        {/* Assinatura Centralizada com Batimento Cardíaco */}
+        <div className="text-[10px] text-white/50 tracking-wider uppercase select-none text-center font-semibold">
+          <span>Powered with 
+            <span className="inline-block animate-pulse text-rose-400 mx-1.5">&#10084;</span> 
+            by <b className="text-white">Mesaque</b> & <b className="text-white">Lorrana</b>
+          </span>
         </div>
       </div>
     </header>
@@ -894,8 +900,11 @@ function App() {
   );
 
   return (
-    <div className="flex flex-col h-screen w-full bg-gray-50">
-      <Header />
+    <div className="flex flex-col h-screen w-full bg-slate-50">
+      {/* Container de flutuação para o cabeçalho */}
+      <div className="p-4 pb-2 no-print shrink-0 z-50">
+        <Header />
+      </div>
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
