@@ -1,4 +1,8 @@
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby_v1968jG0XJ2MQDJYOKhHn_wmKzZezjuclDsJNHdAV1yYRS-GUIwdQpHYNw2gLK4hgw/exec";
+
 const { useState, useEffect } = React;
+const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(null); // 'success', 'error' ou null
 
 // ==========================================
 // 1. BANCO DE DADOS E ARRAYS ORIGINAIS
@@ -224,10 +228,90 @@ function App() {
     });
   };
 
-  // Wrapper para salvar no histórico antes de mostrar a tela de conclusão
+  // Função auxiliar para "achatar" o formulário em uma linha plana para a planilha
+  const achatarDadosForm = (f) => {
+    const eq = f.equipamentos || {};
+    const est = f.estoque || {};
+    const per = f.periodicidade || {};
+    const hig = f.higiene || {};
+
+    return {
+      "ID": f.id,
+      "Data da Visita": f.data,
+      "Instituicao": f.instituicao,
+      "Atendido Por": f.atendidoPor,
+      "Quem Recebeu": f.quemRecebeu,
+      "Cargo": f.cargo === 'Outro' ? f.cargoOutro : f.cargo,
+      "N de Atendidos": f.numAtendidos,
+      "Alimentos Necessarios": (f.alimentos || []).join(', '),
+      "Sobras de Alimentos": f.sobras,
+      "Convenio Prefeitura": f.convenio === 'Sim' ? `Sim (${[...f.convenioOpcoes, f.convenioOutros].filter(Boolean).join(', ')})` : 'Não',
+      "Refeicoes Oferecidas": (f.refeicoes || []).join(', '),
+      "Prioridade de Doacao": f.prioridadeDoacao,
+      "Geladeira Domestica": eq.geladeiraDom || "0",
+      "Geladeira Industrial": eq.geladeiraInd || "0",
+      "Fogao Qtd": eq.fogao?.qtd || "0",
+      "Fogao Bocas": eq.fogao?.bocas || "",
+      "Freezer Qtd": eq.freezer?.qtd || "0",
+      "Freezer Tipos": (eq.freezer?.tipos || []).join(', '),
+      "Camara Fria": eq.camaraFria || "0",
+      "Balcao Quente": eq.balcaoQuente || "0",
+      "Balcao Frio": eq.balcaoFrio || "0",
+      "Forno Comum": eq.fornoComum || "0",
+      "Forno Combinado": eq.fornoCombinado || "0",
+      "Outros Equipamentos": eq.outros || "Nenhum",
+      "Caracteristicas Cozinha": [...(f.caracCozinha || []), f.caracOutro].filter(Boolean).join(', '),
+      "Funcionarios Cozinheiras": f.funcCozinheira || "0",
+      "Funcionarios Auxiliares": f.funcAuxiliar || "0",
+      "Escala": f.escala || "Não informada",
+      "Status Estoque FLV": est.flv || "Não informado",
+      "Freq Entrega FLV": per.flv || "Não informada",
+      "Status Estoque Estocaveis": est.estocaveis || "Não informado",
+      "Freq Entrega Estocaveis": per.estocaveis || "Não informada",
+      "Status Estoque Carnes": est.carnes || "Não informado",
+      "Freq Entrega Carnes": per.carnes || "Não informada",
+      "Higiene Geral": hig.geral || "Não informada",
+      "Higiene Manipuladores": (hig.manipuladores || []).join(', '),
+      "Higiene Cozinha Refeitorio Obs": hig.cozinhaRefeitorio || "Nenhuma",
+      "Aplica Orientacoes Cursos": f.orientacoesAplicadas || "Não informado",
+      "Assistidos com Patologia": f.patologia === 'Sim' ? `Sim (${f.patologiaDesc})` : 'Não',
+      "Tags de Orientacao Aplicadas": (f.orientacoesRapidas || []).join(', '),
+      "Conclusao Nutricionista": f.orientacoesNutricionista || ""
+    };
+  };
+
+  // Função responsável pelo envio assíncrono para o Google Sheets
+  const enviarParaSheets = async (dadosOriginais) => {
+    if (!SHEET_WEBAPP_URL || SHEET_WEBAPP_URL.includes("SUA_URL_DO_APPS_SCRIPT_AQUI")) {
+      console.warn("URL do Google Sheets não configurada.");
+      return;
+    }
+
+    setIsSyncing(true);
+    setSyncStatus(null);
+    try {
+      const dadosAchatados = achatarDadosForm(dadosOriginais);
+      const response = await fetch(SHEET_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors", // Garante envio direto sem bloqueios CORS de navegadores móveis
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosAchatados)
+      });
+      
+      // Como no-cors impede leitura de resposta detalhada, consideramos sucesso se a requisição não disparou erro
+      setSyncStatus("success");
+    } catch (error) {
+      console.error("Erro ao sincronizar com Google Sheets:", error);
+      setSyncStatus("error");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const finalizarVisita = () => {
     salvarNoHistorico(form);
     setDone(true);
+    enviarParaSheets(form); // Dispara envio automático
   };
 
   // Carrega a visita de volta para edição/geração de documentos
@@ -793,7 +877,33 @@ function App() {
   const renderResumo = () => (
     <div className="animate-fade-in print-container bg-white rounded-2xl md:shadow-lg border border-gray-100 overflow-hidden">
       <div className="bg-mb-green p-6 flex justify-between items-center">
-        <div><h2 className="text-white text-lg font-bold">Relatório de Visita Nutricional</h2><p className="text-white/70 text-sm">{form.instituicao || "Instituição não informada"} • {form.data}</p></div>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="text-white text-lg font-bold leading-tight">Relatório de Visita Nutricional</h2>
+            
+            {/* Badges de Sincronização Inteligentes */}
+            {isSyncing && (
+              <span className="bg-white/20 text-white text-[10px] font-semibold px-2 py-0.5 rounded flex items-center gap-1.5 animate-pulse no-print">
+                <i className="ti ti-loader rotate-anime"></i> Sincronizando...
+              </span>
+            )}
+            {!isSyncing && syncStatus === "success" && (
+              <span className="bg-emerald-500/35 text-white border border-emerald-300/30 text-[10px] font-semibold px-2 py-0.5 rounded flex items-center gap-1 no-print">
+                <i className="ti ti-cloud-check text-xs"></i> Salvo na Nuvem
+              </span>
+            )}
+            {!isSyncing && (syncStatus === "error" || syncStatus === null) && (
+              <button 
+                onClick={() => enviarParaSheets(form)} 
+                className="bg-amber-500 text-white hover:bg-amber-600 text-[10px] font-semibold px-2 py-0.5 rounded flex items-center gap-1 transition cursor-pointer no-print"
+                title="Tentar enviar para a planilha novamente"
+              >
+                <i className="ti ti-cloud-off text-xs animate-bounce"></i> Offline (Sincronizar)
+              </button>
+            )}
+          </div>
+          <p className="text-white/70 text-sm">{form.instituicao || "Instituição não informada"} • {form.data}</p>
+        </div>
         <div className="flex gap-2 no-print">
           <button onClick={() => { navigator.clipboard.writeText(gerarTexto()); alert("Texto copiado (Apenas campos preenchidos)!"); }} className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 transition"><i className="ti ti-copy"></i> Copiar</button>
           <button onClick={exportToExcel} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 transition"><i className="ti ti-file-spreadsheet"></i> Planilha</button>
