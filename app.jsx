@@ -107,7 +107,7 @@ function App() {
   const [done, setDone] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSpenOpen, setIsSpenOpen] = useState(false);
 
   const [isSyncing, setIsSyncing] = useState(false);
@@ -469,116 +469,88 @@ function App() {
   };
 
   // ==========================================
-  // NOVA NAVEGAÇÃO: CABEÇALHO E MENU GAVETA
+  // NOVA NAVEGAÇÃO: CABEÇALHO EXPANSÍVEL PREMIUM
   // ==========================================
   const Header = () => (
-    <header className="w-full bg-white border-b border-gray-200 h-16 px-4 flex items-center justify-between no-print shrink-0 z-40 shadow-sm">
-      <div className="flex items-center gap-3">
-        <button 
-          onClick={() => setIsDrawerOpen(true)} 
-          className="w-10 h-10 flex items-center justify-center rounded-xl text-blue-600 hover:bg-slate-100 transition-colors cursor-pointer"
-        >
-          <i className="ti ti-menu-2 text-2xl"></i>
-        </button>
+    <header className={`w-full bg-[#3c67ea] text-white shadow-md transition-all duration-300 ease-in-out overflow-hidden no-print z-50 shrink-0 ${
+      isMenuOpen ? 'max-h-60' : 'max-h-16'
+    }`}>
+      {/* Barra Principal (Sempre Visível) */}
+      <div className="h-16 px-4 md:px-6 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl text-blue-600 font-bold tracking-wide select-none" style={{ fontFamily: "'Dancing Script', cursive" }}>
+          <span className="text-2xl font-bold tracking-wide select-none" style={{ fontFamily: "'Dancing Script', cursive" }}>
             Visitas
           </span>
-          <span className="text-[9px] tracking-[0.2em] uppercase font-bold text-blue-600 select-none">
+          <span className="text-[9px] tracking-[0.2em] uppercase font-bold select-none opacity-80">
             Nutricionais
           </span>
         </div>
-      </div>
-      
-      {/* Indicador de Salvamento Automático Discreto */}
-      {lastSaved && activeMenu === 'nova' && !done && (
-        <div className="flex items-center gap-1.5 text-xs text-gray-400 select-none bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-          </span>
-          <span>Salvo às {lastSaved}</span>
-        </div>
-      )}
-    </header>
-  );
 
-  const Drawer = () => (
-    <>
-      {/* Fundo escurecido semi-transparente */}
-      {isDrawerOpen && (
-        <div 
-          onClick={() => setIsDrawerOpen(false)} 
-          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity no-print"
-        />
-      )}
-      
-      {/* Gaveta que desliza da esquerda */}
-      <div className={`fixed inset-y-0 left-0 w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col justify-between no-print border-r border-slate-100 ${
-        isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        <div>
-          {/* Topo do Menu Gaveta */}
-          <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl text-blue-600 font-bold tracking-wide" style={{ fontFamily: "'Dancing Script', cursive" }}>
-                Visitas
+        <div className="flex items-center gap-3">
+          {/* Indicador de Salvamento Automático Interno */}
+          {lastSaved && activeMenu === 'nova' && !done && (
+            <div className="flex items-center gap-1.5 text-[11px] select-none bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 text-blue-100">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              <span className="text-[9px] tracking-[0.25em] uppercase font-bold text-blue-600">
-                Nutricionais
-              </span>
+              <span>Salvo às {lastSaved}</span>
             </div>
-            <button 
-              onClick={() => setIsDrawerOpen(false)} 
-              className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <i className="ti ti-x text-lg"></i>
-            </button>
-          </div>
+          )}
 
-          {/* Links de Ação */}
-          <nav className="mt-6 flex flex-col gap-2 px-4">
-            <button 
-              onClick={() => { setActiveMenu('nova'); setDone(false); setIsDrawerOpen(false); }} 
-              className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all cursor-pointer ${
-                activeMenu === 'nova' && !done 
-                  ? 'bg-blue-50 text-blue-600 font-semibold shadow-sm shadow-blue-500/5' 
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              <i className="ti ti-clipboard-plus text-xl"></i>
-              <span className="text-sm">Nova Visita</span>
-            </button>
-
-            <button 
-              onClick={() => { setActiveMenu('historico'); setIsDrawerOpen(false); }} 
-              className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all cursor-pointer ${
-                activeMenu === 'historico' 
-                  ? 'bg-blue-50 text-blue-600 font-semibold shadow-sm shadow-blue-500/5' 
-                  : 'text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              <i className="ti ti-history text-xl"></i>
-              <span className="text-sm">Histórico</span>
-            </button>
-
-            <button 
-              onClick={() => { carregarInstituicoesSheets(true); setIsDrawerOpen(false); }} 
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-slate-600 hover:bg-slate-50 cursor-pointer"
-            >
-              <i className="ti ti-refresh text-xl"></i>
-              <span className="text-sm">Atualizar Locais</span>
-            </button>
-          </nav>
-        </div>
-
-        {/* Rodapé com Autores */}
-        <div className="mb-6 px-6 text-slate-400 text-[10px] select-none flex flex-col">
-          <span>Powered with <span className="text-rose-500">&#10084;</span> by</span>
-          <span className="mt-0.5 font-semibold text-slate-600">Mesaque & Lorrana</span>
+          {/* Botão de Expansão (Chevron) */}
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
+          >
+            <i className={`ti ti-chevron-down text-xl transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`}></i>
+          </button>
         </div>
       </div>
-    </>
+
+      {/* Área Expandida (Menu Lado-a-Lado e Assinatura) */}
+      <div className="px-4 md:px-6 pb-4 pt-1 border-t border-white/10 flex flex-col items-center gap-4">
+        {/* Botões do Menu Organizandos Lado a Lado */}
+        <nav className="flex flex-row justify-center gap-2 md:gap-4 w-full max-w-2xl flex-wrap">
+          <button 
+            onClick={() => { setActiveMenu('nova'); setDone(false); setIsMenuOpen(false); }} 
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
+              activeMenu === 'nova' && !done 
+                ? 'bg-white text-[#3c67ea] font-semibold shadow-md shadow-black/5' 
+                : 'text-white bg-white/10 hover:bg-white/15'
+            }`}
+          >
+            <i className="ti ti-clipboard-plus text-lg"></i>
+            <span>Nova Visita</span>
+          </button>
+
+          <button 
+            onClick={() => { setActiveMenu('historico'); setIsMenuOpen(false); }} 
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
+              activeMenu === 'historico' 
+                ? 'bg-white text-[#3c67ea] font-semibold shadow-md shadow-black/5' 
+                : 'text-white bg-white/10 hover:bg-white/15'
+            }`}
+          >
+            <i className="ti ti-history text-lg"></i>
+            <span>Histórico</span>
+          </button>
+
+          <button 
+            onClick={() => { carregarInstituicoesSheets(true); setIsMenuOpen(false); }} 
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all text-white bg-white/10 hover:bg-white/15 cursor-pointer"
+          >
+            <i className="ti ti-refresh text-lg"></i>
+            <span>Sincronizar Locais</span>
+          </button>
+        </nav>
+
+        {/* Assinatura Centralizada em Linha Única */}
+        <div className="text-[10px] text-white/60 select-none text-center">
+          <span>Powered with <span className="text-rose-400">&#10084;</span> by <b>Mesaque</b> & <b>Lorrana</b></span>
+        </div>
+      </div>
+    </header>
   );
   // ==========================================
   // RENDERIZAÇÃO DAS TRÊS ETAPAS (CARDS)
@@ -924,7 +896,6 @@ function App() {
   return (
     <div className="flex flex-col h-screen w-full bg-gray-50">
       <Header />
-      <Drawer />
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
