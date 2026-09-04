@@ -106,6 +106,7 @@ function App() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSpenOpen, setIsSpenOpen] = useState(false);
 
   // Histórico de visitas persistido no navegador deste dispositivo
   const [history, setHistory] = useState(() => {
@@ -760,7 +761,7 @@ function App() {
           <div className="bg-white p-4 rounded-xl border border-blue-100 shadow-md relative">
              <div className="flex justify-between items-center mb-2">
                 <label className="text-xs font-bold text-blue-600 uppercase tracking-wide">Conclusão (Nutricionista)</label>
-                <button onClick={() => document.getElementById('spen-modal').classList.remove('hidden')} className="flex items-center gap-1.5 text-xs bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 shadow-sm shadow-blue-500/10 transition-colors">
+                <button onClick={() => setIsSpenOpen(true)} className="flex items-center gap-1.5 text-xs bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 shadow-sm shadow-blue-500/10 transition-colors cursor-pointer">
                   <i className="ti ti-ballpen"></i> Usar S-Pen (Manuscrito)
                 </button>
              </div>
@@ -961,52 +962,55 @@ function App() {
       </main>
 
       {/* Modal S-PEN (Visual Caderno de Anotações Premium) */}
-      <div id="spen-modal" className="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md spen-modal-open flex items-center justify-center p-4 md:p-10 no-print">
-        <div className="bg-[#fcfbf9] w-full h-[85vh] max-w-5xl rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-in border border-stone-200">
-          
-          {/* Header Elegante */}
-          <div className="bg-white p-5 flex justify-between items-center border-b border-stone-100">
-             <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                 <i className="ti ti-ballpen text-xl"></i>
+      {isSpenOpen && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md spen-modal-open flex items-center justify-center p-4 md:p-10 no-print">
+          <div className="bg-[#fcfbf9] w-full h-[85vh] max-w-5xl rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-in border border-stone-200">
+            
+            {/* Header Elegante */}
+            <div className="bg-white p-5 flex justify-between items-center border-b border-stone-100">
+               <div className="flex items-center gap-3">
+                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                   <i className="ti ti-ballpen text-xl"></i>
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-slate-800 text-lg">Modo Escrita Manual</h3>
+                   <p className="text-xs text-slate-400">Desenvolvido para S-Pen, Apple Pencil ou escrita por toque</p>
+                 </div>
                </div>
-               <div>
-                 <h3 className="font-bold text-slate-800 text-lg">Modo Escrita Manual</h3>
-                 <p className="text-xs text-slate-400">Desenvolvido para S-Pen, Apple Pencil ou escrita por toque</p>
-               </div>
-             </div>
-             <button onClick={() => document.getElementById('spen-modal').classList.add('hidden')} className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 hover:text-stone-700 transition-colors">
-               <i className="ti ti-x text-lg"></i>
-             </button>
-          </div>
-          
-          {/* Bloco de Escrita Realista com Margem de Caderno */}
-          <div className="flex-1 w-full relative bg-[#fcfbf9]">
-            <textarea 
-              className="w-full h-full p-6 pl-24 pr-8 text-lg font-serif outline-none resize-none bg-repeat text-slate-700" 
-              style={{ 
-                backgroundImage: 'linear-gradient(90deg, transparent 79px, #fecaca 79px, #fecaca 81px, transparent 81px), linear-gradient(#f1f5f9 1px, transparent 1px)', 
-                backgroundSize: '100% 100%, 100% 40px', 
-                lineHeight: '40px',
-                paddingTop: '8px'
-              }} 
-              value={form.orientacoesNutricionista} 
-              onChange={e => upd('orientacoesNutricionista', e.target.value)} 
-              placeholder="Comece a digitar ou escrever aqui..."
-            ></textarea>
-          </div>
-          
-          {/* Rodapé do Modal */}
-          <div className="p-4 bg-white border-t border-stone-100 flex justify-end gap-3">
-            <button onClick={() => document.getElementById('spen-modal').classList.add('hidden')} className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md shadow-blue-600/15 transition-all text-sm font-semibold">
-              Concluir Escrita
-            </button>
+               <button onClick={() => setIsSpenOpen(false)} className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-500 hover:bg-stone-200 hover:text-stone-700 transition-colors cursor-pointer">
+                 <i className="ti ti-x text-lg"></i>
+               </button>
+            </div>
+            
+            {/* Bloco de Escrita Realista com Margem de Caderno */}
+            <div className="flex-1 w-full relative bg-[#fcfbf9]">
+              <textarea 
+                autoFocus
+                className="w-full h-full p-6 pl-24 pr-8 text-lg font-serif outline-none resize-none bg-repeat text-slate-700 focus:ring-0" 
+                style={{ 
+                  backgroundImage: 'linear-gradient(90deg, transparent 79px, #fecaca 79px, #fecaca 81px, transparent 81px), linear-gradient(#f1f5f9 1px, transparent 1px)', 
+                  backgroundSize: '100% 100%, 100% 40px', 
+                  lineHeight: '40px',
+                  paddingTop: '8px'
+                }} 
+                value={form.orientacoesNutricionista} 
+                onChange={e => upd('orientacoesNutricionista', e.target.value)} 
+                placeholder="Comece a escrever aqui com sua S-Pen..."
+              ></textarea>
+            </div>
+            
+            {/* Rodapé do Modal */}
+            <div className="p-4 bg-white border-t border-stone-100 flex justify-end gap-3">
+              <button onClick={() => setIsSpenOpen(false)} className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md shadow-blue-600/15 transition-all text-sm font-semibold cursor-pointer">
+                Concluir Escrita
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      )}
+    </div> // <-- Fecha a div principal do retorno do App
+  ); // <-- Fecha o parênteses do return (
+} // <-- Fecha a function App()
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
