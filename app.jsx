@@ -105,6 +105,7 @@ function App() {
   const [done, setDone] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Histórico de visitas persistido no navegador deste dispositivo
   const [history, setHistory] = useState(() => {
@@ -382,82 +383,116 @@ function App() {
   };
 
   // ==========================================
-  // SIDEBARS & MENUS
+  // NOVA NAVEGAÇÃO: CABEÇALHO E MENU GAVETA
   // ==========================================
-  const Sidebar = () => (
-    <div className="group w-16 hover:w-64 transition-all duration-300 bg-zinc-200 text-zinc-800 flex flex-col justify-between h-full shadow-2xl z-50 no-print border-r border-zinc-300/40">
-      <div>
-        {/* Logo Cursiva com Crescimento de Fonte Real e Suave */}
-        <div className="h-28 flex items-center justify-center overflow-hidden">
-          <div className="flex flex-col items-center justify-center transition-all duration-300 ease-in-out">
-            <span 
-              className="text-xl group-hover:text-[44px] text-blue-600 font-bold tracking-wide select-none transition-all duration-500 ease-in-out" 
-              style={{ fontFamily: "'Dancing Script', cursive", lineHeight: '1' }}
+  const Header = () => (
+    <header className="w-full bg-white border-b border-gray-200 h-16 px-4 flex items-center justify-between no-print shrink-0 z-40 shadow-sm">
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={() => setIsDrawerOpen(true)} 
+          className="w-10 h-10 flex items-center justify-center rounded-xl text-blue-600 hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          <i className="ti ti-menu-2 text-2xl"></i>
+        </button>
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl text-blue-600 font-bold tracking-wide select-none" style={{ fontFamily: "'Dancing Script', cursive" }}>
+            Visitas
+          </span>
+          <span className="text-[9px] tracking-[0.2em] uppercase font-bold text-blue-600 select-none">
+            Nutricionais
+          </span>
+        </div>
+      </div>
+      
+      {/* Indicador de Salvamento Automático Discreto */}
+      {lastSaved && activeMenu === 'nova' && !done && (
+        <div className="flex items-center gap-1.5 text-xs text-gray-400 select-none bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+          </span>
+          <span>Salvo às {lastSaved}</span>
+        </div>
+      )}
+    </header>
+  );
+
+  const Drawer = () => (
+    <>
+      {/* Fundo escurecido semi-transparente */}
+      {isDrawerOpen && (
+        <div 
+          onClick={() => setIsDrawerOpen(false)} 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity no-print"
+        />
+      )}
+      
+      {/* Gaveta que desliza da esquerda */}
+      <div className={`fixed inset-y-0 left-0 w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col justify-between no-print border-r border-slate-100 ${
+        isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div>
+          {/* Topo do Menu Gaveta */}
+          <div className="h-16 px-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl text-blue-600 font-bold tracking-wide" style={{ fontFamily: "'Dancing Script', cursive" }}>
+                Visitas
+              </span>
+              <span className="text-[9px] tracking-[0.25em] uppercase font-bold text-blue-600">
+                Nutricionais
+              </span>
+            </div>
+            <button 
+              onClick={() => setIsDrawerOpen(false)} 
+              className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer"
             >
-              Visitas
-            </span>
-            <span className="transition-all duration-500 ease-in-out max-h-0 opacity-0 overflow-hidden group-hover:max-h-12 group-hover:opacity-100 group-hover:mt-2 text-[8px] group-hover:text-[10px] tracking-[0.25em] uppercase font-bold text-blue-600 select-none text-center">
-              Nutricionais
-            </span>
+              <i className="ti ti-x text-lg"></i>
+            </button>
           </div>
-        </div>
 
-        {/* Menu de Navegação e Ações Padronizadas */}
-        <nav className="mt-4 flex flex-col gap-4 px-2">
-          {/* Botão Nova Visita */}
-          <button 
-            onClick={() => { setActiveMenu('nova'); setDone(false); }} 
-            className={`flex items-center w-full rounded-xl transition-all ${
-              activeMenu === 'nova' && !done 
-                ? 'bg-white text-blue-600 shadow-md shadow-blue-500/5 font-semibold' 
-                : 'text-blue-600 hover:bg-zinc-300/60'
-            }`}
-          >
-            <div className="w-12 h-12 flex items-center justify-center shrink-0">
+          {/* Links de Ação */}
+          <nav className="mt-6 flex flex-col gap-2 px-4">
+            <button 
+              onClick={() => { setActiveMenu('nova'); setDone(false); setIsDrawerOpen(false); }} 
+              className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all cursor-pointer ${
+                activeMenu === 'nova' && !done 
+                  ? 'bg-blue-50 text-blue-600 font-semibold shadow-sm shadow-blue-500/5' 
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
               <i className="ti ti-clipboard-plus text-xl"></i>
-            </div>
-            <span className="sidebar-text-expand text-sm font-semibold truncate">Nova Visita</span>
-          </button>
+              <span className="text-sm">Nova Visita</span>
+            </button>
 
-          {/* Botão Histórico */}
-          <button 
-            onClick={() => setActiveMenu('historico')} 
-            className={`flex items-center w-full rounded-xl transition-all ${
-              activeMenu === 'historico' 
-                ? 'bg-white text-blue-600 shadow-md shadow-blue-500/5 font-semibold' 
-                : 'text-blue-600 hover:bg-zinc-300/60'
-            }`}
-          >
-            <div className="w-12 h-12 flex items-center justify-center shrink-0">
+            <button 
+              onClick={() => { setActiveMenu('historico'); setIsDrawerOpen(false); }} 
+              className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all cursor-pointer ${
+                activeMenu === 'historico' 
+                  ? 'bg-blue-50 text-blue-600 font-semibold shadow-sm shadow-blue-500/5' 
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
               <i className="ti ti-history text-xl"></i>
-            </div>
-            <span className="sidebar-text-expand text-sm font-semibold truncate">Histórico (7 dias)</span>
-          </button>
+              <span className="text-sm">Histórico</span>
+            </button>
 
-          {/* Botão Sincronizar planilha de Instituições */}
-          <button 
-            onClick={() => carregarInstituicoesSheets(true)} 
-            className="flex items-center w-full rounded-xl transition-all text-blue-600 hover:bg-zinc-300/60"
-          >
-            <div className="w-12 h-12 flex items-center justify-center shrink-0">
+            <button 
+              onClick={() => { carregarInstituicoesSheets(true); setIsDrawerOpen(false); }} 
+              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-slate-600 hover:bg-slate-50 cursor-pointer"
+            >
               <i className="ti ti-refresh text-xl"></i>
-            </div>
-            <span className="sidebar-text-expand text-sm font-semibold truncate">Atualizar Locais</span>
-          </button>
-        </nav>
-      </div>
+              <span className="text-sm">Atualizar Locais</span>
+            </button>
+          </nav>
+        </div>
 
-      {/* Rodapé Desenvolvedores */}
-      <div className="mb-6 w-full flex flex-col items-center justify-center text-zinc-500 text-[10px] text-center select-none overflow-hidden h-12">
-        <div className="hidden group-hover:flex flex-col items-center animate-fade-in whitespace-nowrap">
+        {/* Rodapé com Autores */}
+        <div className="mb-6 px-6 text-slate-400 text-[10px] select-none flex flex-col">
           <span>Powered with <span className="text-rose-500">&#10084;</span> by</span>
-          <span className="mt-0.5"> <b>Mesaque</b> & <b>Lorrana</b></span>
-        </div>
-        <div className="flex group-hover:hidden text-blue-600 text-lg hover:text-blue-700 transition-colors cursor-help" title="Powered by Mesaque & Lorrana">
-          <i className="ti ti-code"></i>
+          <span className="mt-0.5 font-semibold text-slate-600">Mesaque & Lorrana</span>
         </div>
       </div>
-    </div>
+    </>
   );
   // ==========================================
   // RENDERIZAÇÃO DAS TRÊS ETAPAS (CARDS)
@@ -775,8 +810,9 @@ function App() {
   );
 
   return (
-    <div className="flex h-screen w-full bg-gray-50">
-      <Sidebar />
+    <div className="flex flex-col h-screen w-full bg-gray-50">
+      <Header />
+      <Drawer />
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
