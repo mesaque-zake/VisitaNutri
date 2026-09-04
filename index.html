@@ -38,10 +38,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Vinculação de manifesto PWA e ícones de instalação móvel -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   </head>
   <!-- Aplicando a Plus Jakarta Sans no sistema todo -->
   <body class="bg-gray-50 text-gray-800 h-screen overflow-hidden" style="font-family: 'Plus Jakarta Sans', sans-serif;">
     <div id="root" class="h-full w-full"></div>
     <script type="text/babel" src="app.jsx"></script>
+
+    <!-- Script de registro do Service Worker para suporte PWA/Offline -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registrado com sucesso!', reg.scope))
+            .catch(err => console.warn('Falha ao registrar o Service Worker:', err));
+        });
+      }
+    </script>
   </body>
 </html>
