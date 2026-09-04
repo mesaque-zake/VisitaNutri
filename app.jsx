@@ -1,8 +1,6 @@
 const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby_v1968jG0XJ2MQDJYOKhHn_wmKzZezjuclDsJNHdAV1yYRS-GUIwdQpHYNw2gLK4hgw/exec";
 
 const { useState, useEffect } = React;
-const [isSyncing, setIsSyncing] = useState(false);
-  const [syncStatus, setSyncStatus] = useState(null); // 'success', 'error' ou null
 
 // ==========================================
 // 1. BANCO DE DADOS E ARRAYS ORIGINAIS
@@ -111,6 +109,9 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSpenOpen, setIsSpenOpen] = useState(false);
+
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(null); // 'success', 'error' ou null
 
   // Histórico de visitas persistido no navegador deste dispositivo
   const [history, setHistory] = useState(() => {
